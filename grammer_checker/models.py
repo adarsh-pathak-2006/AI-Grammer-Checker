@@ -7,7 +7,7 @@ class Grammer(models.Model):
     input=models.TextField()
     corrected_text=models.TextField(null=True)
     mistakes=models.JSONField(null=True)
-    explanation=models.TextField(null=True)
+    explanation=models.JSONField(null=True)
     time=models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
