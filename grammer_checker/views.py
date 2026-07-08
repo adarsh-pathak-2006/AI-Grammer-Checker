@@ -4,6 +4,8 @@ from grammer_checker.serializers import *
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from services.response import get_response
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 
 
 class RegisterAPI(APIView):
@@ -26,6 +28,7 @@ class RegisterAPI(APIView):
             return Response({ 'message':'invalid inputs' })
         
 class DashboardAPI(APIView):
+    permission_classes=[IsAuthenticated]
     def get(self, request):
         data=Grammer.objects.filter(user=request.user)
         serial=DashboardSerializer(data, many=True)
@@ -49,5 +52,11 @@ class DashboardAPI(APIView):
         else:
             return Response({ 'message':'invalid input' })
                 
+class IndividualAPI(RetrieveAPIView):
+    permission_classes=[IsAuthenticated]
+    serializer_class=IndividualSerializer
+
+    def get_queryset(self):
+        return Grammer.objects.filter(user=self.request.user)
 
             
