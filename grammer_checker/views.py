@@ -45,7 +45,7 @@ class DashboardAPI(APIView):
                 mistakes=output_serial.validated_data['mistakes']
                 explanation=output_serial.validated_data['explanation']
 
-                Grammer.objects.create(input=input, corrected_text=corrected_text, mistakes=mistakes, explanation=explanation)
+                Grammer.objects.create(input=input, corrected_text=corrected_text, mistakes=mistakes, explanation=explanation, user=self.request.user)
                 return Response({ 'corrected_text':corrected_text, 'mistakes':mistakes, 'explanation':explanation })
             else:
                 return Response({ 'invalid response recieved':'invalid response recieved from the server' })

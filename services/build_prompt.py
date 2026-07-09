@@ -11,3 +11,4 @@ def build_prompt(input):
 
     ONLY PROVIDE THE OUTPUT ACCORDING TO THE INSTRUCTIONS ABOVE.
     """
+    return prompt
