@@ -36,26 +36,29 @@ class DashboardAPI(APIView):
         return Response(serial.data)
     
     def post(self, request):
-        serial=InputSerializer(data=request.data)
-        if serial.is_valid():
-            user_input=serial.validated_data['input']
-            try:
-                final_output=get_response(user_input)
-            except Exception as e:
-                return Response({ 'message': f'AI service error: {str(e)}', 'error': str(e) }, status=status.HTTP_502_BAD_GATEWAY)
+        try:
+            serial=InputSerializer(data=request.data)
+            if serial.is_valid():
+                user_input=serial.validated_data['input']
+                try:
+                    final_output=get_response(user_input)
+                except Exception as e:
+                    return Response({ 'message': f'AI service error: {str(e)}', 'error': str(e) }, status=status.HTTP_502_BAD_GATEWAY)
 
-            output_serial=ResponseSerializer(data=final_output)
-            if output_serial.is_valid():
-                corrected_text=output_serial.validated_data['corrected_text']
-                mistakes=output_serial.validated_data['mistakes']
-                explanation=output_serial.validated_data['explanation']
+                output_serial=ResponseSerializer(data=final_output)
+                if output_serial.is_valid():
+                    corrected_text=output_serial.validated_data['corrected_text']
+                    mistakes=output_serial.validated_data['mistakes']
+                    explanation=output_serial.validated_data['explanation']
 
-                Grammer.objects.create(input=user_input, corrected_text=corrected_text, mistakes=mistakes, explanation=explanation, user=self.request.user)
-                return Response({ 'corrected_text':corrected_text, 'mistakes':mistakes, 'explanation':explanation })
+                    Grammer.objects.create(input=user_input, corrected_text=corrected_text, mistakes=mistakes, explanation=explanation, user=self.request.user)
+                    return Response({ 'corrected_text':corrected_text, 'mistakes':mistakes, 'explanation':explanation })
+                else:
+                    return Response({ 'message':'invalid response from AI', 'errors': output_serial.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
-                return Response({ 'message':'invalid response from AI', 'errors': output_serial.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response({ 'message':'invalid input', 'errors': serial.errors }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({ 'message':'invalid input', 'errors': serial.errors }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({ 'message': f'Server Exception: {str(e)}', 'error': str(e) }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
 class IndividualAPI(RetrieveAPIView):
     permission_classes=[IsAuthenticated]
