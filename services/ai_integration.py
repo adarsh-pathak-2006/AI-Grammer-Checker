@@ -12,9 +12,14 @@ def get_client():
     return client
 
 
+from google.genai import types
+
 def generate_response(prompt):
     response = get_client().models.generate_content(
         model="gemini-1.5-flash",
-        contents=prompt
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+        )
     )
     return response

@@ -42,7 +42,7 @@ class DashboardAPI(APIView):
             try:
                 final_output=get_response(user_input)
             except Exception as e:
-                return Response({ 'message':'AI service error', 'error': str(e) }, status=status.HTTP_502_BAD_GATEWAY)
+                return Response({ 'message': f'AI service error: {str(e)}', 'error': str(e) }, status=status.HTTP_502_BAD_GATEWAY)
 
             output_serial=ResponseSerializer(data=final_output)
             if output_serial.is_valid():
