@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me-before-deploying
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = [host.strip() for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")]
 
 
 # Application definition
@@ -62,10 +62,10 @@ MIDDLEWARE = [
 ]
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = os.getenv(
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in os.getenv(
     "CORS_ALLOWED_ORIGINS",
     "http://localhost:3000,http://127.0.0.1:3000"
-).split(",")
+).split(",")]
 
 CORS_ALLOW_CREDENTIALS = True
 

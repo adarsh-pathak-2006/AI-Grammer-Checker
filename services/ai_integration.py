@@ -14,7 +14,7 @@ def get_client():
 
 def generate_response(prompt):
     response = get_client().models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-1.5-flash",
         contents=prompt
     )
     return response
