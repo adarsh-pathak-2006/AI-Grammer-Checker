@@ -1,13 +1,19 @@
 from google import genai
 from django.conf import settings
 
-client=genai.Client(
-    api_key=settings.GEMINI_API_KEY
-)
+client = None
+
+def get_client():
+    global client
+    if client is None:
+        if not settings.GEMINI_API_KEY:
+            raise ValueError("GEMINI_API_KEY is not set. Add it to your .env file.")
+        client = genai.Client(api_key=settings.GEMINI_API_KEY)
+    return client
 
 
 def generate_response(prompt):
-    response=client.models.generate_content(
+    response = get_client().models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt
     )

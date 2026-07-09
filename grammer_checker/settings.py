@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 from dotenv import load_dotenv
 
@@ -25,12 +26,12 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c$eg-tlh70bmnk9#i$98u1!mk67ljz^%itocp%x(($$)brz8c)'
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me-before-deploying")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 
 # Application definition
@@ -43,11 +44,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
+    'grammer_checker',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -55,13 +59,23 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# CORS Configuration
+CORS_ALLOWED_ORIGINS = os.getenv(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:3000,http://127.0.0.1:3000"
+).split(",")
+
+CORS_ALLOW_CREDENTIALS = True
+
 REST_FRAMEWORK = {
-
     'DEFAULT_AUTHENTICATION_CLASSES': (
-
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-
     ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
 ROOT_URLCONF = 'grammer_checker.urls'

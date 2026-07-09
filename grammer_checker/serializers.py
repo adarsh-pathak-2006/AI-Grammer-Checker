@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer, CharField, JSONField
 from django.contrib.auth.models import User
 from grammer_checker.models import Grammer
 
@@ -17,19 +17,22 @@ class IndividualSerializer(ModelSerializer):
 class DashboardSerializer(ModelSerializer):
     class Meta:
         model=Grammer
-        fields=['user', 'input', 'time']
+        fields=['id', 'user', 'input', 'time']
 
 class InputSerializer(ModelSerializer):
     class Meta:
         model=Grammer
         fields=['input']
-    
-class ResponseSerializer(ModelSerializer):
-    class Meta:
-        model=Grammer
-        fields=['corrected_text', 'mistakes', 'explanation']
+
+class ResponseSerializer(Serializer):
+    corrected_text=CharField()
+    mistakes=JSONField()
+    explanation=JSONField()
 
 class RegisterSerializer(ModelSerializer):
     class Meta:
         model=User
         fields=['first_name', 'last_name', 'username', 'email', 'password']
+        extra_kwargs={
+            'password': {'write_only': True},
+        }
